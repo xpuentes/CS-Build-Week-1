@@ -1,12 +1,14 @@
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-# from pusher import Pusher
-from django.http import JsonResponse
+import json
+
 from decouple import config
 from django.contrib.auth.models import User
-from .models import *
+# from pusher import Pusher
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
-import json
+
+from .models import *
 
 # instantiate pusher
 # pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
@@ -20,6 +22,7 @@ def initialize(request):
     uuid = player.uuid
     room = player.room()
     players = room.playerNames(player_id)
+    print('***********************************************************************')
     return JsonResponse({'uuid': uuid, 'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players}, safe=True)
 
 

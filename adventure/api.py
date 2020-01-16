@@ -1,12 +1,16 @@
 import json
 
 from decouple import config
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core import serializers
 # from pusher import Pusher
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
+
+from util.create_world import build
 
 from .models import *
 
@@ -16,6 +20,7 @@ from .models import *
 @csrf_exempt
 @api_view(["GET"])
 def initialize(request):
+    build()
     user = request.user
     player = user.player
     player_id = player.id
@@ -61,11 +66,13 @@ def move(request):
         players = room.playerNames(player_id)
         return JsonResponse({'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players, 'error_msg':"You cannot move that way."}, safe=True)
 
+@login_required
 @csrf_exempt
 @api_view(["GET"])
 def rooms(request):
 
-    return JsonResponse({'rooms': ['test1', 'test2']}, safe=True)
+    return JsonResponse(list(Room.objects.all().values()), safe=False)
+    # return JsonResponse({'test':'test'}, safe=True)
 
 
 @csrf_exempt
